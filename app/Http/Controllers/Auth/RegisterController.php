@@ -103,5 +103,10 @@ class RegisterController extends Controller
         'PassportDoc'=> $data['PassportDoc'],
         'is_verified'=> $data['is_verified'],
         ]);
+        redirectTo('')
     }
+
+
+
+
 }
