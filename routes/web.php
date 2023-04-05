@@ -43,12 +43,13 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
   
     Route::get('/admin/home', 'App\Http\Controllers\HomeController@AdminHome')->name('admin.home');
     Route::resource('companies', CompanyController::class);
-});
+    Route::get('logout', function (){ auth()->logout();Session()->flush();return Redirect::to('/');})->name('logout'); });
   
-
-
-
-
+/*------------------------------------------
+--------------------------------------------
+Manager Routes List
+--------------------------------------------
+--------------------------------------------*/
 Route::middleware(['auth', 'user-access:manager'])->group(function () {
   
     Route::get('/manager/home', 'App\Http\Controllers\HomeController@ManagerHome')->name('manager.home');
