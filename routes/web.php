@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\UserController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -42,8 +43,10 @@ Admin Routes List
 Route::middleware(['auth', 'user-access:admin'])->group(function () {
   
     Route::get('/admin/home', 'App\Http\Controllers\HomeController@AdminHome')->name('admin.home');
-    Route::resource('companies', CompanyController::class);
-    Route::get('logout', function (){ auth()->logout();Session()->flush();return Redirect::to('/');})->name('logout'); });
+    Route::resource('/Admin/companies', CompanyController::class);
+    Route::resource('/Admin/users', UserController::class);
+    Route::get('logout', function (){ auth()->logout();Session()->flush();return Redirect::to('/');})->name('logout'); 
+});
   
 /*------------------------------------------
 --------------------------------------------
