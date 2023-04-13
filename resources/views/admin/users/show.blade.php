@@ -1,3 +1,2 @@
-@extends('AdminHome')
-@section('content')
-@endsection
+{{$user->name}}
+{{$user->type}}

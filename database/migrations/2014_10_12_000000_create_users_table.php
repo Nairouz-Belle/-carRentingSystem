@@ -21,17 +21,13 @@ return new class extends Migration
             $table->string('address');
             $table->string('ProfilePic')->nullable();
             $table->string('type'); /*type= admin,user,manager*/
-            $table->boolean('is_verified')->default(0);
+            $table->string('status');
             /*  License Inf */
             $table->string('IDLicense')->nullable()->unique();
             $table->string('IDLicenseDate')->nullable();
             $table->string('IDLicenseExpiry')->nullable();
             $table->string('LicenseDoc')->nullable();
-            /*  Passport Inf */
-            $table->string('IDPassport')->nullable()->unique();
-            $table->string('IDPassportDate')->nullable();
-            $table->string('IDPassportExpiry')->nullable();
-            $table->string('PassportDoc')->nullable();
+            
             
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');

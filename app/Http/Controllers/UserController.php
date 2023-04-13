@@ -4,6 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
+use Illuminate\View\View;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -13,8 +18,8 @@ class UserController extends Controller
      */
     public function index()
     {
-        
-        $users = User::all();
+                  
+        $users = User::orderBy('created_at', 'desc')->get();
           
         return view('admin.users.index',compact('users'));
     }
@@ -32,55 +37,128 @@ class UserController extends Controller
      */
    public function store(Request $request)
     {
-        $request->validate([
-            
-          
-        ]);
+        $request->validate([]);
 
-        User::create($request->all());
+        
+        $password = \Hash::make($request->password);
+        
 
-        return redirect()->route('admin.users.index')->with('success','Customer created successfully.');
+        if ($request->file('ProfilePic') != null ) 
+        {    
+            $path = $request->file('ProfilePic')->store('public/images');
+
+           User::create(array_merge($request->all(), ['password' => $password],['ProfilePic' => $path]));
+        
+        }
+        else
+        {
+            User::create(array_merge($request->all(), ['password' => $password]));
+        }
+        return redirect()->route('Users.index')->with('success','Customer created successfully.');
+        
     }
   
     /**
      * Display the specified resource.
      */
-    public function show(User $user)
+   public function show(string $id): View
     {
-        return view('admin.users.show',compact('user'));
+        
+        $user = User::findOrFail($id);
+        
+       
+        return view('admin.users.show', compact('user'));
     }
   
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(User $user) 
+    
+    public function edit(string $id): View
     {
-        return view('admin.users.edit',compact('user'));
+        
+        $user = User::findOrFail($id);
+        
+       
+        return view('admin.users.edit', compact('user'));
     }
   
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request, $id): RedirectResponse
     {
-        $request->validate([
+        //validate form
+        $this->validate($request, [
             
         ]);
+
+        //get post by ID
+        $user = User::findOrFail($id);
+        $password = \Hash::make($request->password); 
+        //check if image is uploaded
+       
         
-        $user->update($request->all());
         
-        return redirect()->route('admin.users.index')
-                        ->with('success','User updated successfully');
+         
+    
+
+        if ($request->ProfilePic!=null) {
+
+              
+            $path = $request->file('ProfilePic')->store('public/images');
+
+            //delete old image
+            Storage::delete('public/images/'.$user->image);
+
+            //update post with new image
+            $user->update([
+                'name'     => $request->name,
+                'type'   => $request->type,
+                'email'   => $request->email,
+                'gender'   => $request->gender,
+                'status'   => $request->status,
+                'address'   => $request->address,
+                'phone'   => $request->phone,
+                'ProfilePic' => $path,
+                'birthDate'   => $request->birthDate,
+                'password'   => $password,
+                'IDLicense'   => $request->IDLicense,
+                'IDLicenseDate'   => $request->IDLicenseDate,
+                'IDLicenseExpiry'   => $request->IDLicenseExpiry,
+            ]);
+
+        } else {
+
+            //update post without image
+            $user->update([
+                'name'     => $request->name,
+                'type'   => $request->type,
+                'email'   => $request->email,
+                'gender'   => $request->gender,
+                'status'   => $request->status,
+                'address'   => $request->address,
+                'phone'   => $request->phone,
+                'birthDate'   => $request->birthDate,
+                'IDLicense'   => $request->IDLicense,
+                'IDLicenseDate'   => $request->IDLicenseDate,
+                'IDLicenseExpiry'   => $request->IDLicenseExpiry,
+                'password'   => $password,
+            ]);
+        }
+        return redirect()->route('Users.index')->with(['success' => 'Data has been updated successfully']);
     }
   
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user)
+    public function destroy($id): RedirectResponse
     {
+
+        $user=User::findOrfail($id);
+        
         $user->delete();
-         
-        return redirect()->route('admin.users.index')
-                        ->with('success','User deleted successfully');
+        return redirect()->route('Users.index');
+                        
     }
 }
