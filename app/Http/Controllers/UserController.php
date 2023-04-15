@@ -43,17 +43,33 @@ class UserController extends Controller
         $password = \Hash::make($request->password);
         
 
-        if ($request->file('ProfilePic') != null ) 
-        {    
-            $path = $request->file('ProfilePic')->store('public/images');
-
-           User::create(array_merge($request->all(), ['password' => $password],['ProfilePic' => $path]));
-        
-        }
-        else
+        if ($request->ProfilePic != null && $request->LicenseDoc != null) 
         {
-            User::create(array_merge($request->all(), ['password' => $password]));
+
+            
+            $ProfilePicture = $request->file('ProfilePic')->store('public/images');
+            $LicensePicture = $request->file('LicenseDoc')->store('public/images');
+            User::create(array_merge($request->all(), ['password' => $password],['ProfilePic' => $ProfilePicture],['LicenseDoc' => $LicensePicture]));
         }
+        else if ($request->ProfilePic == null && $request->LicenseDoc != null) 
+        {
+            dd(2);
+            $LicensePicture = $request->file('LicenseDoc')->store('public/images');  
+            User::create(array_merge($request->all(), ['password' => $password],['LicenseDoc' => $LicensePicture]));        
+        }
+
+        else if ($request->ProfilePic != null && $request->LicenseDoc == null) 
+        {   dd(3);
+            $ProfilePicture = $request->file('ProfilePic')->store('public/images');
+            User::create(array_merge($request->all(), ['password' => $password],['ProfilePic' => $ProfilePicture]));
+        }
+
+        else 
+        {   
+                dd(4);
+                User::create(array_merge($request->all(), ['password' => $password]));
+        }
+        
         return redirect()->route('Users.index')->with('success','Customer created successfully.');
         
     }
@@ -88,62 +104,110 @@ class UserController extends Controller
      */
     public function update(Request $request, $id): RedirectResponse
     {
-        //validate form
+        
         $this->validate($request, [
             
         ]);
 
-        //get post by ID
         $user = User::findOrFail($id);
         $password = \Hash::make($request->password); 
-        //check if image is uploaded
-       
-        
-        
-         
-    
+        $oldimage=$user->ProfilePic;
+        $oldLicenseDoc=$user->LicenseDoc;
 
-        if ($request->ProfilePic!=null) {
+        if ($request->ProfilePic != null && $request->LicenseDoc != null) 
+        {
 
               
-            $path = $request->file('ProfilePic')->store('public/images');
-
-            //delete old image
-            Storage::delete('public/images/'.$user->image);
-
-            //update post with new image
+            $ProfilePicture = $request->file('ProfilePic')->store('public/images');
+            $LicensePicture = $request->file('LicenseDoc')->store('public/images');
+            
             $user->update([
-                'name'     => $request->name,
-                'type'   => $request->type,
-                'email'   => $request->email,
-                'gender'   => $request->gender,
-                'status'   => $request->status,
-                'address'   => $request->address,
-                'phone'   => $request->phone,
-                'ProfilePic' => $path,
-                'birthDate'   => $request->birthDate,
-                'password'   => $password,
-                'IDLicense'   => $request->IDLicense,
-                'IDLicenseDate'   => $request->IDLicenseDate,
+                'name'              => $request->name,
+                'type'              => $request->type,
+                'email'             => $request->email,
+                'gender'            => $request->gender,
+                'status'            => $request->status,
+                'address'           => $request->address,
+                'phone'             => $request->phone,
+                'ProfilePic'        => $ProfilePicture,
+                'birthDate'         => $request->birthDate,
+                'password'          => $password,
+                'IDLicense'         => $request->IDLicense,
+                'IDLicenseDate'     => $request->IDLicenseDate,
+                'IDLicenseExpiry'   => $request->IDLicenseExpiry,
+                'LicenseDoc'        => $LicensePicture,
+            ]);
+            Storage::delete($oldimage);
+            Storage::delete($oldLicenseDoc);
+
+        }
+        else if ($request->ProfilePic == null && $request->LicenseDoc != null) 
+        {
+
+            $LicensePicture = $request->file('LicenseDoc')->store('public/images');
+           
+            
+            
+            $user->update([
+                'name'              => $request->name,
+                'type'              => $request->type,
+                'email'             => $request->email,
+                'gender'            => $request->gender,
+                'status'            => $request->status,
+                'address'           => $request->address,
+                'phone'             => $request->phone,
+                'birthDate'         => $request->birthDate,
+                'password'          => $password,
+                'IDLicense'         => $request->IDLicense,
+                'IDLicenseDate'     => $request->IDLicenseDate,
+                'IDLicenseExpiry'   => $request->IDLicenseExpiry,
+                'LicenseDoc'        => $LicensePicture,
+            ]);
+            Storage::delete($oldLicenseDoc);
+
+        } 
+        else if ($request->ProfilePic != null && $request->LicenseDoc == null) 
+        {
+
+              
+            $ProfilePicture = $request->file('ProfilePic')->store('public/images');
+            
+            $user->update([
+                'name'              => $request->name,
+                'type'              => $request->type,
+                'email'             => $request->email,
+                'gender'            => $request->gender,
+                'status'            => $request->status,
+                'address'           => $request->address,
+                'phone'             => $request->phone,
+                'ProfilePic'        => $ProfilePicture,
+                'birthDate'         => $request->birthDate,
+                'password'          => $password,
+                'IDLicense'         => $request->IDLicense,
+                'IDLicenseDate'     => $request->IDLicenseDate,
                 'IDLicenseExpiry'   => $request->IDLicenseExpiry,
             ]);
+            Storage::delete($oldimage);
+            
 
-        } else {
+        } 
+        else 
+        {
 
-            //update post without image
-            $user->update([
-                'name'     => $request->name,
-                'type'   => $request->type,
-                'email'   => $request->email,
-                'gender'   => $request->gender,
-                'status'   => $request->status,
-                'address'   => $request->address,
-                'phone'   => $request->phone,
-                'birthDate'   => $request->birthDate,
-                'IDLicense'   => $request->IDLicense,
-                'IDLicenseDate'   => $request->IDLicenseDate,
+                $user->update([
+                'name'              => $request->name,
+                'type'              => $request->type,
+                'email'             => $request->email,
+                'gender'            => $request->gender,
+                'status'            => $request->status,
+                'address'           => $request->address,
+                'phone'             => $request->phone,
+                'birthDate'         => $request->birthDate,
+                'IDLicense'         => $request->IDLicense,
+                'IDLicenseDate'     => $request->IDLicenseDate,
                 'IDLicenseExpiry'   => $request->IDLicenseExpiry,
-                'password'   => $password,
+                'password'          => $password,
+                
             ]);
         }
         return redirect()->route('Users.index')->with(['success' => 'Data has been updated successfully']);
