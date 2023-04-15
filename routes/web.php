@@ -14,6 +14,19 @@ use App\Http\Controllers\UserController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+Route::get('/car/index', function () {
+    return view('admin.cars.index');
+});
+Route::get('/car/edit', function () {
+    return view('admin.cars.edit');
+});
+Route::get('/car/show', function () {
+    return view('admin.cars.show');
+});
+Route::get('/car/create', function () {
+    return view('admin.cars.create');
+});
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -46,6 +59,9 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     Route::resource('/Admin/Company', CompanyController::class);
     Route::resource('/Admin/Users', UserController::class);
     Route::get('Admin/logout', function (){ auth()->logout();Session()->flush();return Redirect::to('/');})->name('admin.logout'); 
+    //Route::get('/Admin/Search/{name}', 'App\Http\Controllers\UserController@search')->name('admin.search');
+    //Route::get('/search/', 'PostsController@search')->name('search');
+
 
 });
   

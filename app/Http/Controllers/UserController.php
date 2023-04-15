@@ -53,20 +53,20 @@ class UserController extends Controller
         }
         else if ($request->ProfilePic == null && $request->LicenseDoc != null) 
         {
-            dd(2);
+            
             $LicensePicture = $request->file('LicenseDoc')->store('public/images');  
             User::create(array_merge($request->all(), ['password' => $password],['LicenseDoc' => $LicensePicture]));        
         }
 
         else if ($request->ProfilePic != null && $request->LicenseDoc == null) 
-        {   dd(3);
+        {   
             $ProfilePicture = $request->file('ProfilePic')->store('public/images');
             User::create(array_merge($request->all(), ['password' => $password],['ProfilePic' => $ProfilePicture]));
         }
 
         else 
         {   
-                dd(4);
+                
                 User::create(array_merge($request->all(), ['password' => $password]));
         }
         
