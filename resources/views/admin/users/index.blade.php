@@ -44,17 +44,12 @@
                             <div class="card">
                                 <div class="card-header" style="">
                                     <span style="font-size: 24px;font-weight: bold;color: #5ea3cb;">Basic Datatables</span>
-                                    
-                                            
-                                                <button type="button" class="btn btn-primary add-btn" data-bs-toggle="modal" id="create-btn" data-bs-target="#showModal" style="float:right;"><i class="ri-add-line align-bottom me-1"></i> Create Order</button>
-                                        
-                                        
+                                        <button type="button" class="btn btn-primary add-btn" data-bs-toggle="modal" id="create-btn" data-bs-target="#showModal" style="float:right;"><i class="ri-add-line align-bottom me-1"></i> Create Order</button>
                                 </div>
 
                                 <div class="card-body">
                                     <div id="example_wrapper" class="dataTables_wrapper dt-bootstrap5 no-footer">
-
-                                      <div class="row"><div class="col-sm-12">
+                                    <div class="row"><div class="col-sm-12">
                                         <table id="example" class="table table-bordered dt-responsive nowrap table-striped align-middle dataTable no-footer dtr-inline collapsed" style="width: 100%;" aria-describedby="example_info">
                                         <thead>
                                             <tr><th scope="col" style="width: 16.8px;" class="sorting sorting_asc" tabindex="0" aria-controls="example" rowspan="1" colspan="1" aria-sort="ascending" aria-label="
@@ -138,29 +133,28 @@
                                                         </button>
                                                         <ul class="dropdown-menu dropdown-menu-end">
                                                             <li>
-                                                              <a class="dropdown-item show-item-btn" href="{{route('Users.show',$usr->id)}}"><i class="ri-eye-fill align-bottom me-2 text-muted"></i> Show
-                                                                </a>
-                                                            </li>
-                                                            
+                                                                <a href="{{route('Users.show',$usr->id)}}" class="dropdown-item" ><i class="ri-eye-fill align-bottom me-2 text-muted"></i> View</a></li>
                                                             <li>
-                                                                <a class="dropdown-item edit-item-btn" href="{{route('Users.edit',$usr->id)}}"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit
-                                                                </a>
-                                                            </li>
-                                                            
+                                                                <a class="dropdown-item edit-item-btn" href="{{route('Users.edit',$usr->id)}}"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>
                                                             <li>
-                                                            <a class="dropdown-item">
-                                                                <form method="POST" action="{{route('Users.destroy',$usr->id)}}">
+                                                              <a class="dropdown-item">
+                                                               
+                                                             <form method="POST" action="{{route('Users.destroy',$usr->id)}}">
                                                                 @csrf
                                                                 <input name="_method" type="hidden" value="DELETE">
+
                                                                 <button type="submit" class="show-alert-delete-box"style="background-color: inherit;border: none;" data-toggle="tooltip" title=''><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>Delete</button>
-                                                                </form>
-                                                            </a>
+                                                            </form></a>
+
+
+                                                            
                                                             </li>
                                                                         
                                                             
                                                             </li>
                                                         </ul>
                                      
+                                    <!--end modal -->
                                     
                                                     </div>
                                                 </td>
@@ -191,33 +185,28 @@
                                                 <form  action="{{route('Users.store')}}" method="POST" class="tablelist-form" enctype="multipart/form-data"  autocomplete="off">
                                                   @csrf
                                                     <div class="modal-body">
-                                                            <div class="mb-3">
-                          <div class="row dz-clickable" data-dropzone="data-dropzone" data-options="{&quot;maxFiles&quot;:1,&quot;data&quot;:[{&quot;name&quot;:&quot;avatar.png&quot;,&quot;size&quot;:&quot;54kb&quot;,&quot;url&quot;:&quot;../../assets/img/team&quot;}]}">
-                            
-                            <div class="col-md-auto">
-                              <div class="dz-preview dz-preview-single">
+                                                            <div class="text-center">
+                                                              <h5 class="fs-17 mb-1">Profile Picture</h5>
+                                                              <br>
+                                                              <div class="profile-user position-relative d-inline-block mx-auto mb-4">
+                                                                        @if($usr->ProfilePic == NULL)
+                                                                            <img src="{{asset('assets/images/users/noProfilePicture.png')}}" class="rounded-circle avatar-xl img-thumbnail user-profile-image" alt="user-profile-image">
+                                                                        @else
+                                                                            <img src="{{ Storage::url($usr->ProfilePic) }}" class="rounded-circle avatar-xl img-thumbnail user-profile-image" alt="user-profile-image">
+                                                                        @endif
+                                                                
+                                                                    
 
-                                <div class="dz-preview-cover d-flex align-items-center justify-content-center mb-3 mb-md-0 dz-image-preview">                                  
-                                <div class="avatar avatar-4xl">
-                                    <img class="rounded-circle" src="{{asset('assets/images/users/noProfilePicture.png')}}" width="25" alt="">
-                                </div>                                  
-                                <div class="dz-progress">
-                                    <span class="dz-upload" data-dz-uploadprogress=""></span>
-                                </div>                                
-                                </div>
-                            </div>
-                            </div>
-                            <div class="col-md">
-                              <div class="dz-message dropzone-area px-2 py-3" data-dz-message="data-dz-message">
-                                <div class="text-center">
-                                    <img class="me-2" src="{{asset('assets/images/users/noProfilePicture.png')}}" width="25" alt="">Upload your profile picture
-                                    <p class="mb-0 fs--1 text-400">Upload a 300x300 jpg image with 
-                                        <br>a maximum size of 400KB</p>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
+                                                                    <div class="avatar-xs p-0 rounded-circle profile-photo-edit">
+                                                                        <input name="ProfilePic" id="profile-img-file-input" type="file" class="profile-img-file-input">
+                                                                        <label for="profile-img-file-input" class="profile-photo-edit avatar-xs">
+                                                                            <span class="avatar-title rounded-circle bg-light text-body">
+                                                                                <i class="ri-camera-fill"></i>
+                                                                            </span>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                              </div>
 
 
                                                              
