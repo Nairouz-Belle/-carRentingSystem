@@ -8,9 +8,15 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Auth;
-
+use App\Models\Payment;
+use App\Models\Reservation;
+use App\Models\Vehicule;
+use App\Models\User;
+use App\Models\Rating;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -53,9 +59,38 @@ class User extends Authenticatable
      *
      * @var array<string, string>
      */
-    protected $casts = [
+
+    protected $casts = 
+    [
         'email_verified_at' => 'datetime',
     ];
+
+    public function getRedirectRoute()
+    {
+        return match((int)$this->type) {
+            'customer' => '',
+            'manager'  => 'Manager.Dashboard.dashboard',
+            'admin' => 'admin.Dashboard.dashboard'
+        };
+    }
+
+    public function reservations(): HasMany
+    {
+        return $this->hasMany(Reservation::class);
+    }
+
+    public function ratings(): HasMany
+    {
+        return $this->hasMany(Rating::class);
+    }
     
-    
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
+    public function vehicules(): HasMany
+    {
+        return $this->hasMany(Vehicule::class);
+    }
+
 }

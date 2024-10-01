@@ -27,7 +27,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = RouteServiceProvider::HOME;
+    protected $redirectTo = '/home';
 
     /**
      * Create a new controller instance.
@@ -39,7 +39,7 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
-    public function login(Request $request)
+   public function login(Request $request)
     {   
         $input = $request->all();
      
@@ -47,21 +47,29 @@ class LoginController extends Controller
             'email' => 'required|email',
             'password' => 'required',
         ]);
-     
         if(auth()->attempt(array('email' => $input['email'], 'password' => $input['password'])))
         {
-            if (auth()->user()->type == 'admin') 
-            {return redirect()->route('admin.home');}
+            if(auth()->user()->status == 'Confirmed')
+            {   
+                if (auth()->user()->type == 'admin') 
+                {return redirect()->route('admin.home');}
 
-            if (auth()->user()->type == 'manager') {
-                return redirect()->route('manager.home');}
-            else{
-                return redirect()->route('home');
+                if (auth()->user()->type == 'manager') 
+                {return redirect()->route('manager.home');}
+                
+                else 
+                {return redirect()->route('customer.home');}
             }
-        }else{
-            return redirect()->route('login')
-                ->with('error','Email-Address And Password Are Wrong.');
+            if(auth()->user()->status == 'Pending')
+            {
+                {return redirect()->route('pendingAccount');}
+            }
+            else
+            {
+                {return redirect()->route('blockedAccount');}
+            }
         }
-          
+        else    {return redirect()->route('loginIn')->with('error','Invalid email address or password. Please try again.');}
     }
+
 }

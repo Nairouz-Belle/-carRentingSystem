@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Company;
 use Illuminate\Http\Request;
-
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
+use Illuminate\View\View;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 class CompanyController extends Controller
 {
     /**
@@ -13,9 +17,16 @@ class CompanyController extends Controller
     public function index()
     {
         
-        $companies = Company::with('companies')->get();
-          
-        return view('admin.company.index',compact('companies'));
+        $companies = Company::all();
+         if (Auth::user()->type == 'admin')
+          {
+            return view('admin.company.index',compact('companies'));
+          }
+        else
+          {
+            return view('Manager.company.index',compact('companies'));
+          } 
+        
     }
   
     /**
@@ -23,7 +34,15 @@ class CompanyController extends Controller
      */
     public function create()
     {
-        return view('admin.company.create');
+        if (Auth::user()->type == 'admin')
+          {
+            return view('admin.company.create');
+          }
+        else
+          {
+            return view('Manager.company.create');
+          } 
+        
     }
   
     /**
@@ -35,51 +54,139 @@ class CompanyController extends Controller
             
           
         ]);
+        $image = $request->file('image')->store('public/images');
+       
+       
+        Company::create(array_merge($request->all(), ['image' => $image]));
+        if (Auth::user()->type == 'admin')
+          {
+            return redirect()->route('Company.index')->with('success','Company created successfully.');
+          }
+        else
+          {
+            return redirect()->route('manager.company.index')->with('success','Company created successfully.');
+          } 
 
-        Company::create($request->all());
-
-        return redirect()->route('admin.company.index')->with('success','Company created successfully.');
+        
     }
   
     /**
      * Display the specified resource.
      */
-    public function show(Company $company)
+    public function show(string $id): View
     {
-        return view('admin.company.show',compact('company'));
+        
+        $company = Company::findOrFail($id);
+        
+       if (Auth::user()->type == 'admin')
+          {
+            return view('admin.company.show', compact('company'));
+          }
+        else
+          {
+            return view('Manager.company.show', compact('company'));
+          } 
+
+        
     }
   
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Company $company) 
+     public function edit(string $id): View
     {
-        return view('admin.company.edit',compact('company'));
+        
+        $company = Company::findOrFail($id);
+        
+       if (Auth::user()->type == 'admin')
+          {
+            return view('admin.company.edit', compact('company'));
+          }
+        else
+          {
+            return view('Manager.company.edit', compact('company'));
+          } 
+        
     }
   
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Company $company)
+    public function update(Request $request,$id): RedirectResponse
     {
         $request->validate([
             
         ]);
+
         
-        $company->update($request->all());
-        
-        return redirect()->route('admin.company.index')
+    
+        $company = Company::findOrFail($id);
+        $oldimage=$company->image;
+        if ($request->image != null)
+        {
+        $CompanyLogo = $request->file('image')->store('public/images');
+        $company->update([
+                'image'              => $CompanyLogo,
+                'email'              => $request->email,
+                'address'            => $request->address,
+                'phone'              => $request->phone, 
+                'facebook'           => $request->facebook,
+                'instagram'          => $request->instagram,
+                'twitter'            => $request->twitter,
+                'linkedin'           => $request->linkedin,
+                'companyName'        => $request->companyName,
+                'website'            => $request->website,
+                'created_at'         => now(),
+                'updated_at'         => now(),
+                'owner'              => $request->owner,
+                'description'        => $request->description,
+                ]);
+        Storage::delete($oldimage);
+        }
+        else
+        {
+        $company->update([
+                
+                'email'              => $request->email,
+                'address'            => $request->address,
+                'phone'              => $request->phone, 
+                'facebook'           => $request->facebook,
+                'instagram'          => $request->instagram,
+                'twitter'            => $request->twitter,
+                'linkedin'           => $request->linkedin,
+                'companyName'        => $request->companyName,
+                'website'            => $request->website,
+                'created_at'         => now(),
+                'updated_at'         => now(),
+                'owner'              => $request->owner,
+                'description'        => $request->description,
+
+                
+            ]);
+        }
+            
+            if (Auth::user()->type == 'admin')
+          {
+            return redirect()->route('Company.index')
                         ->with('success','Company updated successfully');
+          }
+        else
+          {
+           return redirect()->route('manager.company.index')
+                        ->with('success','Company has been updated successfully');
+          } 
+            
     }
   
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Company $company)
-    {
+    public function destroy($id)
+    {   
+        $company= Company::findOrfail($id);
         $company->delete();
          
-        return redirect()->route('admin.company.index')
-                        ->with('success','Company deleted successfully');
+        return redirect()->route('Company.index');
+                       
     }
 }

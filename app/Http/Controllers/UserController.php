@@ -9,7 +9,7 @@ use Illuminate\Http\Response;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
-
+use DB;
 class UserController extends Controller
 {
     //
@@ -21,7 +21,16 @@ class UserController extends Controller
                   
         $users = User::orderBy('created_at', 'desc')->get();
           
-        return view('admin.users.index',compact('users'));
+
+          if (Auth::user()->type == 'admin')
+          {
+           return view('admin.users.index',compact('users'));
+          }
+        else
+          {
+           return view('Manager.users.index',compact('users'));
+          }
+        
     }
   
     /**
@@ -29,7 +38,15 @@ class UserController extends Controller
      */
     public function create()
     {
-        return view('admin.users.create');
+        if (Auth::user()->type == 'admin')
+          {
+           return view('admin.users.create');
+          }
+        else
+          {
+           return view('Manager.users.create');
+          }
+        
     }
   
     /**
@@ -41,14 +58,14 @@ class UserController extends Controller
 
         
         $password = \Hash::make($request->password);
-        
+        //dd(Auth::user()->type);
 
         if ($request->ProfilePic != null && $request->LicenseDoc != null) 
         {
-
-            
             $ProfilePicture = $request->file('ProfilePic')->store('public/images');
+            
             $LicensePicture = $request->file('LicenseDoc')->store('public/images');
+            
             User::create(array_merge($request->all(), ['password' => $password],['ProfilePic' => $ProfilePicture],['LicenseDoc' => $LicensePicture]));
         }
         else if ($request->ProfilePic == null && $request->LicenseDoc != null) 
@@ -69,8 +86,26 @@ class UserController extends Controller
                 
                 User::create(array_merge($request->all(), ['password' => $password]));
         }
-        
-        return redirect()->route('Users.index')->with('success','Customer created successfully.');
+          
+    if (Auth::check()) 
+    {
+        if (Auth::user()->type == 'admin') 
+        {
+            return redirect()->route('Users.index')->with('success', 'Customer created successfully.');
+        } 
+        elseif (Auth::user()->type == 'customer') 
+        {
+            return redirect()->route('users.index')->with('success', 'Customer created successfully.');
+        } 
+        else 
+        {
+            return redirect()->route('manager.users.index')->with('success', 'Customer created successfully.');
+        }
+    } 
+    else 
+    {
+    return redirect()->back()->with('success', 'Registration successful! Your account will be activated once it is approved by an admin.');
+    }
         
     }
   
@@ -82,8 +117,19 @@ class UserController extends Controller
         
         $user = User::findOrFail($id);
         
-       
-        return view('admin.users.show', compact('user'));
+       if (Auth::user()->type == 'customer')
+          {
+            return view('Customer.users.show', compact('user'));
+          }
+        elseif (Auth::user()->type == 'admin')
+          {
+            return view('admin.users.show', compact('user'));
+          }
+        else
+          {
+            return view('Manager.users.show', compact('user'));
+          }
+        
     }
   
     /**
@@ -94,9 +140,52 @@ class UserController extends Controller
     {
         
         $user = User::findOrFail($id);
-        
+        if (Auth::user()->type == 'customer')
+          {
+            return view('Customer.users.edit', compact('user'));
+          }
+        elseif (Auth::user()->type == 'admin')
+          {
+            return view('admin.users.edit', compact('user'));
+          }
+        else
+          {
+            return view('Manager.users.edit', compact('user'));
+          }
        
-        return view('admin.users.edit', compact('user'));
+        
+    }
+
+    public function Confirmed(string $id)
+    {
+        
+        $user = User::findOrFail($id);
+        $user->update(['status'=> 'Confirmed']);
+       if (Auth::user()->type == 'admin')
+          {
+           return redirect()->back();
+          }
+        else
+          {
+           return redirect()->back();
+          }
+        
+    }
+
+    public function Blocked(string $id)
+    {
+        
+        $user = User::findOrFail($id);
+        $user->update(['status'=> 'Blocked']);
+       if (Auth::user()->type == 'admin')
+          {
+           return redirect()->back();
+          }
+        else
+          {
+           return redirect()->back();
+          }
+        
     }
   
     /**
@@ -110,17 +199,19 @@ class UserController extends Controller
         ]);
 
         $user = User::findOrFail($id);
-        $password = \Hash::make($request->password); 
+        
         $oldimage=$user->ProfilePic;
         $oldLicenseDoc=$user->LicenseDoc;
 
         if ($request->ProfilePic != null && $request->LicenseDoc != null) 
         {
 
-              
+                      
             $ProfilePicture = $request->file('ProfilePic')->store('public/images');
             $LicensePicture = $request->file('LicenseDoc')->store('public/images');
             
+              
+
             $user->update([
                 'name'              => $request->name,
                 'type'              => $request->type,
@@ -131,7 +222,6 @@ class UserController extends Controller
                 'phone'             => $request->phone,
                 'ProfilePic'        => $ProfilePicture,
                 'birthDate'         => $request->birthDate,
-                'password'          => $password,
                 'IDLicense'         => $request->IDLicense,
                 'IDLicenseDate'     => $request->IDLicenseDate,
                 'IDLicenseExpiry'   => $request->IDLicenseExpiry,
@@ -143,7 +233,7 @@ class UserController extends Controller
         }
         else if ($request->ProfilePic == null && $request->LicenseDoc != null) 
         {
-
+             
             $LicensePicture = $request->file('LicenseDoc')->store('public/images');
            
             
@@ -157,7 +247,6 @@ class UserController extends Controller
                 'address'           => $request->address,
                 'phone'             => $request->phone,
                 'birthDate'         => $request->birthDate,
-                'password'          => $password,
                 'IDLicense'         => $request->IDLicense,
                 'IDLicenseDate'     => $request->IDLicenseDate,
                 'IDLicenseExpiry'   => $request->IDLicenseExpiry,
@@ -169,7 +258,7 @@ class UserController extends Controller
         else if ($request->ProfilePic != null && $request->LicenseDoc == null) 
         {
 
-              
+            
             $ProfilePicture = $request->file('ProfilePic')->store('public/images');
             
             $user->update([
@@ -182,7 +271,6 @@ class UserController extends Controller
                 'phone'             => $request->phone,
                 'ProfilePic'        => $ProfilePicture,
                 'birthDate'         => $request->birthDate,
-                'password'          => $password,
                 'IDLicense'         => $request->IDLicense,
                 'IDLicenseDate'     => $request->IDLicenseDate,
                 'IDLicenseExpiry'   => $request->IDLicenseExpiry,
@@ -193,7 +281,8 @@ class UserController extends Controller
         } 
         else 
         {
-
+                
+        
                 $user->update([
                 'name'              => $request->name,
                 'type'              => $request->type,
@@ -206,11 +295,22 @@ class UserController extends Controller
                 'IDLicense'         => $request->IDLicense,
                 'IDLicenseDate'     => $request->IDLicenseDate,
                 'IDLicenseExpiry'   => $request->IDLicenseExpiry,
-                'password'          => $password,
                 
             ]);
         }
-        return redirect()->route('Users.index')->with(['success' => 'Data has been updated successfully']);
+        if (Auth::user()->type == 'customer')
+          {
+            return redirect()->back()->with(['EditUser' => 'Data has been updated successfully']);
+          }
+        elseif (Auth::user()->type == 'admin')
+          {
+            return redirect()->route('Users.index')->with(['EditUser' => 'Data has been updated successfully']);
+          }
+        else
+          {
+            return redirect()->route('manager.users.index')->with(['EditUser' => 'Data has been updated successfully']);
+          }
+        
     }
   
     /**
@@ -220,6 +320,16 @@ class UserController extends Controller
     {
 
         $user=User::findOrfail($id);
+        //search the vehicle id in reservation table soi can change the status of this vehicle
+        $searchVehicle=DB::table('reservations')
+                                                ->where('user_id','=',$user->id)
+                                                ->value('vehicule_id');
+                                                
+                                               // dd($searchVehicle);
+        $changeStatus=DB::table('vehicules')
+                                                ->where('id','=',$searchVehicle)
+                                                ->update(['status'=>'Available']);
+        
         
         $user->delete();
         return redirect()->route('Users.index');

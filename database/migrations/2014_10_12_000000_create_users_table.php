@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('gender');            
-            $table->string('birthDate');
+            $table->date('birthDate');
             $table->string('email')->unique();
             $table->string('phone')->unique();
             $table->string('address');
@@ -24,8 +24,8 @@ return new class extends Migration
             $table->string('status');
             /*  License Inf */
             $table->string('IDLicense')->nullable()->unique();
-            $table->string('IDLicenseDate')->nullable();
-            $table->string('IDLicenseExpiry')->nullable();
+            $table->date('IDLicenseDate')->nullable();
+            $table->date('IDLicenseExpiry')->nullable();
             $table->string('LicenseDoc')->nullable();
             
             

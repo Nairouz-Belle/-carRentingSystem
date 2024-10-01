@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\User;
 use Illuminate\Http\Request;
 use Auth;
 class HomeController extends Controller
@@ -23,18 +23,20 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $user = User::findOrFail(Auth::user()->id);
+        
+        return redirect()->to(url('/Customer/Users/'.$user->id));
+         
     }
-
 
     public function AdminHome()
     {
-        return view('AdminHome');
+        return view('admin.Dashboard.dashboard');
     }
 
     public function ManagerHome()
     {
-        return view('ManagerHome');
+        return view('Manager.Dashboard.dashboard');
     }
 
 }

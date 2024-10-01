@@ -1,221 +1,317 @@
 @extends('AdminHome')
 @section('content')
-        
-
-            <div class="page-content">
-                <div class="container-fluid">
-
-                    <div class="position-relative mx-n4 mt-n4">
-                        <div class="profile-wid-bg profile-setting-img">
-                            <img src="{{asset('assets/images/cover.jpg')}}" class="profile-wid-img" alt="">
-                            <div class="overlay-content">
-                                <div class="text-end p-3">
-                                    <div class="p-0 ms-auto rounded-circle profile-photo-edit">
-                                        <input id="profile-foreground-img-file-input" type="file" class="profile-foreground-img-file-input">
-                                        <label for="profile-foreground-img-file-input" class="profile-photo-edit btn btn-light">
-                                            <a href="{{route('Users.index')}} "  style="color: black;"><i class="ri-image-edit-line align-bottom me-1"></i> Go Back</a>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                     <form action="{{ route('Users.update',$user->id) }}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        @method('PUT')
-
-                    <div class="row">
-                        <div class="col-xxl-3">
-                            <div class="card mt-n5">
-                                <div class="card-body p-4">
-                                    <div class="text-center">
-                                        <div class="profile-user position-relative d-inline-block mx-auto  mb-4">
-                        
-                                            @if($user->ProfilePic == NULL)
-                                                <img src="{{asset('assets/images/users/noProfilePicture.png')}}" class="rounded-circle avatar-xl img-thumbnail user-profile-image" alt="user-profile-image">
-                                            @else
-                                                <img src="{{ Storage::url($user->ProfilePic) }}" class="rounded-circle avatar-xl img-thumbnail user-profile-image" alt="user-profile-image">
-                                            @endif
-                                            
-                                            <div class="avatar-xs p-0 rounded-circle profile-photo-edit">
-                                                <input id="profile-img-file-input" name="ProfilePic" type="file" class="profile-img-file-input">
-                                                <label for="profile-img-file-input" class="profile-photo-edit avatar-xs">
-                                                    <span class="avatar-title rounded-circle bg-light text-body">
-                                                        <i class="ri-camera-fill"></i>
-                                                    </span>
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <h5 class="fs-17 mb-1">{{$user->name}}</h5>
-                                        <p class="text-muted mb-0">{{$user->type}}</p>
-                                    </div>
-                                </div>
-                        </div>
-                        
-                        </div>
-                        <!--end col-->
-                        <div class="col-xxl-9">
-                            <div class="card mt-xxl-n5">
-                                <div class="card-header">
-                                    <ul class="nav nav-tabs-custom rounded card-header-tabs border-bottom-0" role="tablist">
-                                        <li class="nav-item">
-                                            <a class="nav-link active" data-bs-toggle="tab" href="#personalDetails" role="tab">
-                                                <i class="fas fa-home"></i>
-                                                Personal Details
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-
-                                <div class="card-body p-4">
-                                    <div class="tab-content">
-                                        <div class="tab-pane active" id="personalDetails" role="tabpanel">
-                                            <form action="javascript:void(0);">
-                                                <div class="row">
-                                                    
-                                                            <div class="col-lg-6">
-                                                                <div class="mb-3">
-                                                                     <label for="lastnameInput" class="form-label">
-                                                                     Name</label>
-                                                                    <input type="text" name="name" class="form-control" id="lastnameInput" placeholder="Enter your Name" value="{{$user->name}}">
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="col-lg-6">
-                                                                <div class="mb-3">
-                                                                    <label for="" class="form-label">Role</label>
-                                                                    <select class="form-control" data-trigger name="type" required id="">
-                                                                        
-                                                                        <option value="customer" {{($user->gender ==='customer') ? 'selected' : ''}}> customer </option>
-                                                                        <option value="manager" {{($user->gender ==='manager') ? 'selected' : ''}}> manager </option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                       
-
-                                                            <div class="col-lg-6">
-                                                                <div class="mb-3">
-                                                                    <label for="amount-field" class="form-label">Address</label>
-                                                                    <input type="text" name="address" class="form-control" placeholder="Address" value="{{$user->address}}" required />
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-lg-6">
-                                                                <div class="mb-3">
-                                                                    <label  class="form-label">Phone</label>
-                                                                    <input type="number" name="phone" value="{{$user->phone}}"class="form-control" placeholder="Phone" required />
-                                                                </div>
-                                                            </div>
-                                                       
 
 
-                                                        
-                                                            <div class="col-lg-6">
-                                                                <div class="mb-3">
-                                                                    <label for="" class="form-label">Gender</label>
-                                                                    <select class="form-control" data-trigger name="gender" name="gender" required id="">
-                                                                        <option value="Male" {{($user->gender ==='Male') ? 'selected' : ''}}> Male </option>
-                                                                        <option value="Female" {{($user->gender ==='Female') ? 'selected' : ''}}> Female </option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-lg-6">
-                                                                <div class="mb-3">
-                                                                <label for="birthDate" class="form-label">Birth Date</label>
-                                                                <input type="date" name="birthDate"value="{{$user->birthDate}}" class="form-control" id="birthDate">
-                                                                </div>
-                                                            </div>
+<div class="page-content">
+<div class="container-fluid">
 
-                                                        
-                                                        
-
-                                                        
-                                                            
-                                                              <div class="col-lg-6">
-                                                                <div class="mb-3">
-                                                                    <label  class="form-label">Email</label>
-                                                                    <input type="email" value="{{$user->email}}" name="email" class="form-control" placeholder="User@User.com" required />
-                                                                </div>
-                                                            </div>
-                                                            @php
-                                                            $password = Hash::make($user->password);
-                                                            @endphp
-                                                            <div class="col-lg-6">
-                                                                <div class="mb-3">
-                                                                    <label  class="form-label">Password</label>
-                                                                    <input type="password" name="password" value="{{$user->password}}" placeholder="**** ****" class="form-control" required />
-                                                                </div>
-                                                            </div>
-                                                        
+<div class="position-relative mx-n4 mt-n4">
+<div class="profile-wid-bg profile-setting-img">
+<img src="{{asset('assets/images/cover.jpg')}}" class="profile-wid-img" alt="">
+<div class="overlay-content">
+<div class="text-end p-3">
+<div class="p-0 ms-auto rounded-circle profile-photo-edit">
+<input id="profile-foreground-img-file-input" type="file" class="profile-foreground-img-file-input" name="ProfilePic">
+<label for="profile-foreground-img-file-input" class="profile-photo-edit btn btn-light">
+<a href="{{route('Users.index')}} "  style="color: black;"><i class="ri-image-edit-line align-bottom me-1"></i> @lang('messages.Go Back')</a>
+</label>
+</div>
+</div>
+</div>
+</div>
+</div>
 
 
 
-                                                        
-                                                            
-                                                            <div class="col-lg-6">
-                                                                <div class="mb-3">
-                                                                    <label  class="form-label">ID License</label>
-                                                                    <input type="text" name="IDLicense" value="{{$user->IDLicense}}" class="form-control" placeholder="0123456789"  />
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-lg-6">
-                                                                <div class="mb-3">
-                                                                    <label  class="form-label">ID License Date</label>
-                                                                    <input type="date" name="IDLicenseDate" value="{{$user->IDLicenseDate}}"placeholder="" class="form-control"  />
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-lg-6">
-                                                                <div class="mb-3">
-                                                                    <label  class="form-label">ID License Expiry</label>
-                                                                    <input type="date" name="IDLicenseExpiry" value="{{$user->IDLicenseExpiry}}" placeholder="**** ****" class="form-control"  />
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-lg-6">
-                                                              <!-- Default File Input Example -->
-                                                                    <div class="mb-3">
-                                                                        <label for="formFile" class="form-label">ID License Document</label>
-                                                                        <input class="form-control" type="file" name="LicenseDoc" value="{{$user->LicenseDoc}}">
-                                                                    </div>
-                                                            </div>
-                                                        
+<div class="row">
 
 
-                                                        
-                                                            <div class="col-lg-6">
-                                                                <div class="mb-3">
-                                                                    <label for="" class="form-label">Status</label>
-                                                                    <select class="form-control" name="status" id="">
-                                                                        
-                                                                        <option value="Pending" {{($user->status ==='Pending') ? 'selected' : ''}}>Pending</option>
-                                                                        <option value="Confirmed" {{($user->status ==='Confirmed') ? 'selected' : ''}}>Confirmed</option>
-                                                                        <option value="Canceled" {{($user->status ==='Canceled') ? 'selected' : ''}}>Canceled</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
+<form form action="{{ route('Users.update',$user->id) }}" method="POST" enctype="multipart/form-data" style="display: flex; gap:20px;">
+@csrf
+@method('PUT')
+<div class="col-xxl-3">
+<div class="card mt-n5">
 
-                                                            
-                                                            
-                                                    
-                                                    
-                                                    <!--end col-->
-                                                    <div class="col-lg-12">
-                                                        <div class="hstack gap-2 justify-content-end">
-                                                            <button type="submit" class="btn btn-primary">Update</button>
-                                                            <button type="button" class="btn btn-soft-success">Cancel</button>
-                                                        </div>
-                                                    </div>
-                                                    <!--end col-->
-                                                </div>
-                                                <!--end row-->
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    </form>
-                </div>
-            
-        </div>
+
+<div class="card-body p-4">
+<div class="text-center">
+
+<div class="profile-user position-relative d-inline-block mx-auto  mb-4">
+
+@if($user->ProfilePic == NULL)
+<img src="{{asset('assets/images/users/noProfilePicture.png')}}" class="rounded-circle avatar-xl img-thumbnail user-profile-image" alt="user-profile-image">
+@else
+<img src="{{ Storage::url($user->ProfilePic) }}" class="rounded-circle avatar-xl img-thumbnail user-profile-image" alt="user-profile-image">
+@endif
+
+<div class="avatar-xs p-0 rounded-circle profile-photo-edit">
+<input id="profile-img-file-input" name="ProfilePic" type="file" class="profile-img-file-input">
+<label for="profile-img-file-input" class="profile-photo-edit avatar-xs">
+<span class="avatar-title rounded-circle bg-light text-body">
+<i class="ri-camera-fill"></i>
+</span>
+</label>
+</div>
+</div>
+<h5 class="fs-17 mb-1 text-info">{{$user->name}}</h5>
+<p class="text-success text-uppercase mb-0">{{$user->type}}</p>
+</div>
+</div>
+
+@if ($errors->has('old_password'))
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+<strong>{{ $errors->first('old_password') }}</strong> 
+<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+@endif
+
+@if ($errors->has('new_password'))
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+<strong>{{ $errors->first('new_password') }}</strong> 
+<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+@endif
+
+@if(session('success'))
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+<strong>{{ session('success') }}</strong> 
+<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+@endif
+@if($user->name == (Auth::user()->name))
+<button type="button" class="btn btn-info btn-label waves-effect waves-light"data-bs-toggle="modal" data-bs-target="#exampleModalgrid"><i class="ri-key-2-fill label-icon align-middle fs-16 me-2"></i> @lang('messages.Change Password')</button>
+@else
+@endif
+</div>
+</div>
+<!--end col-->
+
+<div class="col-xxl-9">
+<div class="card mt-xxl-n5">
+<div class="card-header">
+<ul class="nav nav-tabs-custom rounded card-header-tabs border-bottom-0" role="tablist">
+<li class="nav-item">
+<a class="nav-link text-info active" data-bs-toggle="tab" href="#personalDetails" role="tab">
+<i class="fas fa-home"></i>
+@lang('messages.Personal Details')
+</a>
+</li>
+</ul>
+</div>
+
+<div class="card-body p-4">
+<div class="tab-content">
+<div class="tab-pane active" id="personalDetails" role="tabpanel">
+@if(session('EditUser'))
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+<strong>{{ session('EditUser') }}</strong> 
+<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+@endif
+
+
+<div class="row">
+
+<div class="col-lg-6">
+<div class="mb-3">
+<label for="lastnameInput" class="form-label">
+@lang('messages.Name')</label>
+<input type="text" name="name" class="form-control" id="lastnameInput" placeholder="Enter your Name" value="{{$user->name}}">
+</div>
+</div>
+
+<div class="col-lg-6">
+    <div class="mb-3">
+        <label for="" class="form-label">@lang('messages.Role')</label>
+        <select class="form-control" data-trigger name="type" required id="roleSelect">
+            <option value="admin" {{($user->type == 'admin') ? 'selected' : ''}}> @lang('messages.Admin') </option>
+            <option value="customer" {{($user->type == 'customer') ? 'selected' : ''}}> @lang('messages.Customer') </option>
+            <option value="manager" {{($user->type == 'manager') ? 'selected' : ''}}> @lang('messages.Manager') </option>
+        </select>
+    </div>
+</div>
+
+
+<div class="col-lg-6">
+<div class="mb-3">
+<label for="amount-field" class="form-label">@lang('messages.Address')</label>
+<input type="text" name="address" class="form-control" placeholder="@lang('messages.Address')" value="{{$user->address}}" required />
+</div>
+</div>
+<div class="col-lg-6">
+<div class="mb-3">
+<label  class="form-label">@lang('messages.Phone')</label>
+<input type="number" name="phone" value="{{$user->phone}}"class="form-control" placeholder="@lang('messages.Phone')" required />
+</div>
+</div>
+
+
+
+
+<div class="col-lg-6">
+<div class="mb-3">
+<label for="" class="form-label">@lang('messages.Gender')</label>
+<select class="form-control" data-trigger name="gender" name="gender" required id="">
+<option value="Male" {{($user->gender ==='Male') ? 'selected' : ''}}> @lang('messages.Male') </option>
+<option value="Female" {{($user->gender ==='Female') ? 'selected' : ''}}> @lang('messages.Female') </option>
+</select>
+</div>
+</div>
+<div class="col-lg-6">
+<div class="mb-3">
+<label for="birthDate" class="form-label">@lang('messages.Birth Date')</label>
+<input type="date" name="birthDate"value="{{$user->birthDate}}" class="form-control">
+</div>
+</div>
+
+
+
+
+
+
+<div class="col-lg-6">
+<div class="mb-3">
+<label  class="form-label">@lang('messages.Email')</label>
+<input type="email" value="{{$user->email}}" name="email" class="form-control" placeholder="User@User.com" required />
+</div>
+</div>
+
+
+
+
+
+
+
+<div class="col-lg-6">
+<div class="mb-3">
+<label  class="form-label">@lang('messages.ID License')</label>
+<input type="text" name="IDLicense" value="{{$user->IDLicense}}" class="form-control" placeholder="@lang('messages.ID License')"  />
+</div>
+</div>
+<div class="col-lg-6">
+<div class="mb-3">
+<label  class="form-label">@lang('messages.ID License Date')</label>
+<input type="date" name="IDLicenseDate" value="{{$user->IDLicenseDate}}"placeholder="@lang('messages.ID License Date')" class="form-control"  />
+</div>
+</div>
+<div class="col-lg-6">
+<div class="mb-3">
+<label  class="form-label">@lang('messages.ID License Expiry')</label>
+<input type="date" name="IDLicenseExpiry" value="{{$user->IDLicenseExpiry}}" placeholder="@lang('messages.ID License Expiry')" class="form-control"  />
+</div>
+</div>
+<div class="col-lg-6">
+<!-- Default File Input Example -->
+<div class="mb-3">
+<label for="formFile" class="form-label">@lang('messages.ID License Document')</label>
+<input class="form-control" type="file" name="LicenseDoc" value="{{$user->LicenseDoc}}">
+</div>
+</div>
+
+
+
+<div class="col-lg-6">
+<div class="mb-3">
+<label for="" class="form-label">Status</label>
+<select class="form-control" name="status" id="" style="font-weight: bold; color:#DB005B; ">
+
+<option class="text-warning" value="Pending" {{($user->status ==='Pending') ? 'selected' : ''}}>@lang('messages.Pending')</option>
+<option class="text-success" value="Confirmed" {{($user->status ==='Confirmed') ? 'selected' : ''}}>@lang('messages.Confirmed')</option>
+<option class="text-danger" value="Blocked" {{($user->status ==='Blocked') ? 'selected' : ''}}>@lang('messages.Blocked')</option>
+</select>
+</div>
+</div>
+
+
+
+
+
+<!--end col-->
+<div class="col-lg-12">
+<div class="hstack gap-2 justify-content-end">
+<button type="submit" class="btn btn-primary">@lang('messages.Edit')</button>
+<button type="button" class="btn btn-soft-success">@lang('messages.Cancel')</button>
+</div>
+</div>
+<!--end col-->
+</div>
+<!--end row-->
+
+</div>
+</div>
+</div>
+
+
+<div class="card-body p-4">
+<div class="tab-content">
+<div class="tab-pane active" id="changePassword" role="tabpanel">
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</form>
+
+
+
+
+
+
+
+
+
+</div>
+<form action="{{ route('admin.password.update') }}" method="POST">
+@csrf
+<div class="modal fade" id="exampleModalgrid" tabindex="-1" aria-labelledby="exampleModalgridLabel" aria-modal="true">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<h5 class="modal-title text-info" id="exampleModalgridLabel">@lang('messages.Change Password')</h5>
+<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+
+<div class="row g-3">
+
+<div class="col-xxl-12">
+<div>
+<label for="passwordInput" class="form-label">@lang('messages.Old Password')</label>
+<input type="password" class="form-control" name="old_password" id="passwordInput" placeholder="@lang('messages.Old Password')">
+
+</div>
+</div><!--end col-->
+
+<div class="col-xxl-12">
+<div>
+<label for="passwordInput" class="form-label">@lang('messages.New Password')</label>
+<input type="password" class="form-control" name="new_password" id="passwordInput" placeholder="@lang('messages.New Password')">
+</div>
+</div><!--end col-->
+
+<div class="col-xxl-12">
+<div>
+<label for="passwordInput" class="form-label">@lang('messages.Confirm Password')</label>
+<input type="password" class="form-control" name="new_password_confirmation" id="passwordInput" placeholder="@lang('messages.Confirm Password')">
+</div>
+</div><!--end col-->
+
+
+<div class="col-lg-12">
+<div class="hstack gap-2 justify-content-end">
+<button type="button" class="btn btn-light" data-bs-dismiss="modal">@lang('messages.Close')</button>
+<button type="submit" class="btn btn-info">@lang('messages.Submit')</button>
+</div>
+</div><!--end col-->
+</div><!--end row-->
+
+</div>
+</div>
+</div>
+</div>
+</form>
+
+
+</div>
 @endsection

@@ -39,6 +39,7 @@ class RegisterController extends Controller
     public function __construct()
     {
         $this->middleware('guest');
+
     }
 
     /**
@@ -49,30 +50,7 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {
-        return Validator::make($data, [
-            
-        'name'=>['required', 'string', 'max:255'],
-        'gender'=> ['required', 'string', 'max:255'],
-        'address'=> ['required', 'string', 'max:255'],
-        'phone'=> ['required', 'string', 'max:255'],
-        'type'=> ['string', 'max:255'],
-        'is_verified'=> ['string', 'max:255'],
-        'birthDate'=> ['required', 'string', 'max:255'],
-        'ProfilePic'=> ['string', 'max:255'],
-        'email'=>['required', 'string', 'email', 'max:255', 'unique:users'],
-        'password'=> ['required', 'string', 'min:8', 'confirmed'],
-        'LicenseDoc'=> ['string', 'max:255'],
-        'IDLicenseDate'=> ['string', 'max:255'],
-        'IDLicenseExpiry'=> ['string', 'max:255'],
-        'IDLicense'=> ['string', 'max:255'],
-        'IDPassport'=> ['string', 'max:255'],
-        'IDPassportDate'=> ['string', 'max:255'],
-        'IDPassportExpiry'=> ['string', 'max:255'],
-        'PassportDoc'=> ['string', 'max:255'],
-        
-
-
-        ]);
+       return Validator::make($data, []);
     }
 
     /**
@@ -83,6 +61,7 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        
         return User::create([
         'name'=> $data['name'],
         'password' => Hash::make($data['password']),
@@ -97,12 +76,9 @@ class RegisterController extends Controller
         'IDLicenseDate'=> $data['IDLicenseDate'],
         'IDLicenseExpiry'=> $data['IDLicenseExpiry'],
         'IDLicense'=> $data['IDLicense'],
-        'IDPassport'=> $data['IDPassport'],
-        'IDPassportDate'=> $data['IDPassportDate'],
-        'IDPassportExpiry'=> $data['IDLicenseExpiry'],
-        'PassportDoc'=> $data['PassportDoc'],
-        'is_verified'=> $data['is_verified'],
+        'status'=> $data['status'],
         ]);
+
         
     }
 
